@@ -15,6 +15,9 @@ load_dotenv()
 # Setup OpenAI
 openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
+#################################################################
+# Routes
+
 @app.route('/')
 def index():
     try:
@@ -61,8 +64,10 @@ def chat():
     prompt_model = data.get('prompt_model')
     file_paths = data.get('files', [])
     prompt_system = """
-        You are Software Engineer GPT, an AI software engineer.
-        You will be provided with a code repository and asked questions about making changes to the code.
+    Your name is "Code with GPT". You're an intelligent chat bot that answers questions about programming code.
+    You may be provided files with each query and asked to make changes to the code.
+    Respond concisely, focusing on the code changes that need to occur. Do not summarize.
+    Be sure to mention the changes that need to take place across all files sent to you.
     """
 
     # Combine user prompt with file contents
@@ -107,6 +112,15 @@ def chat():
         }), 500
 
     return jsonify({"response": response_message})
+
+@app.route('/api/file-contents', methods=['POST'])
+def file_contents():
+    file_paths = request.json.get('files', [])
+    contents = files_to_text(file_paths)
+    return jsonify({"contents": contents})
+
+#################################################################
+# Utils
 
 def get_model_list():
     models = openai.models.list()

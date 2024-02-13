@@ -10,33 +10,38 @@
 </head>
 <body>
     <div id="container" class="d-flex">
-        <div class="file-viewer">
+        <div class="left-interface">
             <span>Model ID:</span>
-            <select class="dropdown form-control mb-3" id="model-selector">
+            <select class="form-select mb-3" id="model-selector">
                 {% for model in models %}
                 <option value="{{ model.id }}" {% if model.id == current_model_choice %}selected{% endif %}>{{ model.id }}</option>
                 {% endfor %}
             </select>
 
             <span>Folder Path:</span>
-            <input type="text" id="folder-selector" class="form-control mb-3" value="{{ current_folder_path }}">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="folder-selector" value="{{ current_folder_path }}" aria-describedby="folder-selector-btn">
+                <button class="btn btn-info" type="button" id="folder-selector-btn" onclick="fetchFiles()">Fetch</button>
+            </div>
 
             <span>Files:</span>
             <div id="file-system">
                 <!-- Files appear here -->
             </div>
             
-            <button class="btn btn-secondary" onclick="unselectAllFiles()">Unselect All</button>
-            <button class="btn btn-secondary" onclick="selectAllFiles()">Select All</button>
-            <button class="btn btn-warning" onclick="resetSettings()">Reset Settings (Will Reload Page)</button>
-            <button class="btn btn-info" onclick="fetchFiles()">Fetch Files</button>
+            <div class="d-flex justify-content-between px-2">
+                <button class="btn btn-secondary w-100 m-2" onclick="unselectAllFiles()">Unselect All</button>
+                <button class="btn btn-secondary w-100 m-2" onclick="selectAllFiles()">Select All</button>
+            </div>
+            <button class="btn btn-secondary mx-3 my-2" id="copy-file-contents" onclick="copyFileContentsAsPrompt()" disabled>Copy File Contents as Prompt</button>
+            <button class="btn btn-warning mx-3 mt-2 mb-3" onclick="resetSettings()">Reset Settings (Will Reload Page)</button>
         </div>        
-        <div class="chat-interface">
+        <div class="right-interface">
             <div id="chat-response">
                 <!-- Chat responses appear here -->
             </div>
-            <textarea id="user-input" class="form-control" placeholder="Type your message here..."></textarea>
-            <button id="send-button" class="btn btn-primary" onclick="sendChat()" disabled>Send (ctrl+enter)</button>
+            <textarea id="user-input" class="form-control m-3 mb-0" placeholder="Type your question here. If files are selected they will be automatically added to the query."></textarea>
+            <button id="send-button" class="btn btn-primary m-3" onclick="sendChat()" disabled>Send (ctrl+enter)</button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

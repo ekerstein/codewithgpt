@@ -1,3 +1,6 @@
+////////////////////////////////////////////////////////////////////
+// Functions
+
 function sendChat() {
     let userInput = document.getElementById('user-input').value.trim();
     if (!userInput) {
@@ -105,20 +108,6 @@ function sendChat() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetchFiles(); // Automatically fetch files after fetching the current folder path
-    
-    const input = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-button');
-
-    input.addEventListener('input', function() {
-        // Enable the send button only if there's text in the input box
-        sendButton.disabled = !this.value.trim();
-    });
-
-    feather.replace(); // Initialize Feather icons
-});
-
 function fetchFiles() {
     // Assuming 'base_path' is known or selected by the user
     const basePath = document.getElementById('folder-selector').value; // or any other logic to get/set this
@@ -144,23 +133,90 @@ function fetchFiles() {
                         const checkBox = this.querySelector('.file-checkbox');
                         checkBox.checked = !checkBox.checked;
                     }
+                    updateCopyButtonState();
                 });
             });
         })
         .catch(error => console.error('Failed to fetch files:', error));
 }
 
+function resetSettings() {
+    fetch('/reset-settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to clear settings');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error clearing settings:', error);
+    });
+}
+
+function copyFileContentsAsPrompt() {
+    let selectedFiles = [];
+    document.querySelectorAll('input[name="files"]:checked').forEach(checkbox => {
+        selectedFiles.push(checkbox.value);
+    });
+    
+    fetch('/api/file-contents', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            files: selectedFiles,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        navigator.clipboard.writeText(data.contents).then(() => {
+            console.log("Files contents copied to clipboard")
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 function unselectAllFiles() {
     document.querySelectorAll('input[name="files"]:checked').forEach(checkbox => {
         checkbox.checked = false;
     });
+    updateCopyButtonState();
 }
 
 function selectAllFiles() {
     document.querySelectorAll('input[name="files"]').forEach(checkbox => {
         checkbox.checked = true;
     });
+    updateCopyButtonState();
 }
+
+function updateCopyButtonState() {
+    const anyFilesSelected = document.querySelectorAll('input[name="files"]:checked').length > 0;
+    document.getElementById('copy-file-contents').disabled = !anyFilesSelected;
+}
+
+////////////////////////////////////////////////////////////////////
+// Event Listeners
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetchFiles(); // Automatically fetch files after fetching the current folder path
+    updateCopyButtonState();
+    feather.replace(); // Initialize Feather icons
+});
 
 document.getElementById('model-selector').addEventListener('change', function() {
     let selectedModel = this.value;
@@ -219,24 +275,7 @@ document.getElementById('user-input').addEventListener('keydown', function(event
     }
 });
 
-function resetSettings() {
-    fetch('/reset-settings', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to clear settings');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data.message);
-        window.location.reload();
-    })
-    .catch(error => {
-        console.error('Error clearing settings:', error);
-    });
-}
+document.getElementById('user-input').addEventListener('input', function() {
+    // Enable the send button only if there's text in the input box
+    document.getElementById('send-button').disabled = !this.value.trim();
+});

@@ -13,29 +13,24 @@ body, html {
     overflow: hidden;
     background-color: #f0f8ff; /* Very light blue background */
 }
-.dropdown {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0px;
-}
 
 /*------------ Files ------------*/
 
-.file-viewer {
-    flex: 0 0 25%; 
+.left-interface {
+    flex: 0 0 33.33%; 
     display: flex;
     flex-direction: column;
     border-right: 1px solid #dee2e6; 
 }
-.file-viewer > span { 
+.left-interface > span { 
     margin-left: 10px;
 }
-.file-viewer:last-child {
+.left-interface:last-child {
     border-right: none;
 }
 .file-item {
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 4px 10px;
 }
 .file-item:hover {
     background-color: #e9ecef;
@@ -49,10 +44,10 @@ body, html {
     color: #6c757d;
 }
 
-/*------------ Chat ------------*/
+/*------------ Right Interface ------------*/
 
-.chat-interface {
-    flex: 0 0 75%; 
+.right-interface {
+    flex: 0 0 66.66%; 
     display: flex;
     flex-direction: column;
 }
@@ -73,16 +68,9 @@ body, html {
 }
 #user-input {
     width: calc(100% - 20px);
-    margin: 10px;
-    padding: 10px;
     height: 200px;
     box-sizing: border-box;
     background-color: #ffffff; 
-}
-button {
-    padding: 10px 20px;
-    margin: 10px;
-    cursor: pointer;
 }
 .spinner-icon {
     border: 4px solid rgba(0,0,0,.1);
