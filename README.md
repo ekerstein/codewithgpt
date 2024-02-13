@@ -1,6 +1,8 @@
 # Code with GPT
 
-This app allows you to send your entire code repository to OpenAI when asking questions.
+Chat interface that allows you to send your code repository to OpenAI while asking questions.
+
+![2024-02-12 Screenshot](https://github.com/ekerstein/codewithgpt/assets/6055508/1bfcdf3e-c6fa-4aa2-961a-7be84a41b767)
 
 ## Getting Started
 
