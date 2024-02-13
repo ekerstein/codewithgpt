@@ -218,3 +218,25 @@ document.getElementById('user-input').addEventListener('keydown', function(event
         event.preventDefault(); // Prevent default behavior to avoid newline in textarea
     }
 });
+
+function resetSettings() {
+    fetch('/reset-settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to clear settings');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.message);
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error clearing settings:', error);
+    });
+}

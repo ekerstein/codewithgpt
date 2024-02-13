@@ -5,3 +5,4 @@ venv/
 .gitignore
 .gptignore
 requirements.txt
+LICENSE

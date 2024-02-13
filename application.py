@@ -18,8 +18,7 @@ openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 @app.route('/')
 def index():
     try:
-        models = openai.models.list()
-        sorted_models = sorted([model for model in models.data if model.id.startswith('gpt')], key=lambda x: x.id)
+        sorted_models = get_model_list()
     except Exception as e:
         print(f"Error fetching models: {e}")
         sorted_models = []
@@ -43,6 +42,11 @@ def set_folder():
     folder_path = request.json.get('folder_path')  # Assuming folder path is sent as JSON data
     session['folder_path'] = folder_path  # Store folder path in session
     return jsonify({'message': 'Folder path saved', 'folder_path': folder_path})
+   
+@app.route('/reset-settings', methods=['POST'])
+def reset_settings():
+    session.clear()
+    return jsonify({'message': 'Settings reset to default'})
 
 @app.route('/api/files')
 def get_files():
@@ -103,6 +107,10 @@ def chat():
         }), 500
 
     return jsonify({"response": response_message})
+
+def get_model_list():
+    models = openai.models.list()
+    return sorted([model for model in models.data if model.id.startswith('gpt')], key=lambda x: x.id)
 
 def get_current_folder_path():
     return session.get('folder_path', os.getcwd())  # Default to current working directory if not set
