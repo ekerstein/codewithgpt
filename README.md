@@ -2,7 +2,7 @@
 
 Chat interface that allows you to send your code repository to OpenAI when asking questions.
 
-![2024-02-12 Screenshot](https://github.com/ekerstein/codewithgpt/assets/6055508/1bfcdf3e-c6fa-4aa2-961a-7be84a41b767)
+![screenshot](https://github.com/ekerstein/codewithgpt/assets/6055508/9a54a867-470c-48e7-8464-541c33b68457)
 
 ## Getting Started
 
