@@ -1,4 +1,5 @@
-/* style.css */
+/*------------ General ------------*/
+
 body, html {
     margin: 0;
     padding: 0;
@@ -19,6 +20,7 @@ body, html {
 }
 
 /*------------ Files ------------*/
+
 .file-viewer {
     flex: 0 0 25%; 
     display: flex;
@@ -56,11 +58,18 @@ body, html {
 }
 #chat-response {
     max-height: 90%;
-}
-#chat-response {
     flex-grow: 1;
     overflow-y: auto;
     padding: 10px;
+    background-color: white;
+}
+#chat-response pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+#chat-response code {
+    display: inline-block;
+    word-wrap: break-word;
 }
 #user-input {
     width: calc(100% - 20px);
@@ -83,7 +92,6 @@ button {
     width: 20px;
     height: 20px;
 }
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
