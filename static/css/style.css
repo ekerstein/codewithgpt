@@ -15,7 +15,7 @@ body, html {
 .dropdown {
     width: 100%;
     padding: 10px;
-    margin: 10px 10px;
+    margin: 10px 0px;
 }
 
 /*------------ Files ------------*/
@@ -45,9 +45,6 @@ body, html {
 }
 #file-system div {
     color: #6c757d;
-}
-#folder-path { 
-    margin: 10px 10px; 
 }
 
 /*------------ Chat ------------*/
