@@ -159,6 +159,13 @@ def is_ignored(path, ignore_patterns, base_path):
             return True
     return False
 
+def is_text_file(file_path): 
+    _, ext = os.path.splitext(file_path)
+    image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.ico']
+    if ext.lower() in image_extensions:
+        return False
+    return True
+
 def list_directory(base_path):
     ignore_patterns = parse_gptignore(base_path)
     directory_contents = []
@@ -170,16 +177,11 @@ def list_directory(base_path):
         filtered_files = [f for f in files if not is_ignored(os.path.join(root, f), ignore_patterns, base_path)]
         # Append filtered files (assuming directories are not being listed separately)
         for name in filtered_files:
-            relative_path = os.path.relpath(os.path.join(root, name), base_path)
-            directory_contents.append({'type': 'file', 'name': name, 'path': relative_path, 'ignored': False})
+            full_path = os.path.join(root, name)
+            if is_text_file(full_path):
+                relative_path = os.path.relpath(full_path, base_path)
+                directory_contents.append({'type': 'file', 'name': name, 'path': relative_path, 'ignored': False})
     return {"files": directory_contents, "gptignoreExists": gptignore_exists}
-
-def is_text_file(file_path):
-    _, ext = os.path.splitext(file_path)
-    image_extensions = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.ico']
-    if ext.lower() in image_extensions:
-        return False
-    return True
 
 def files_to_text(file_paths):
     contents = []
