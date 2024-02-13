@@ -1,0 +1,7 @@
+.git
+__pycache__/
+venv/
+.env
+.gitignore
+.gptignore
+requirements.txt

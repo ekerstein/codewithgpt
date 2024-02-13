@@ -1,0 +1,6 @@
+# Python artifacts
+__pycache__/
+
+# Environments
+venv/
+.env

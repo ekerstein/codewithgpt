@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Interface with File Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div id="container" class="d-flex">
+        <div class="file-viewer">
+            <span>Model ID:</span>
+            <select class="dropdown form-control mb-3" id="model-selector">
+                {% for model in models %}
+                <option value="{{ model.id }}" {% if model.id == current_model_choice %}selected{% endif %}>{{ model.id }}</option>
+                {% endfor %}
+            </select>
+
+            <span>Folder Path:</span>
+            <input type="text" id="folder-path" class="form-control mb-3" value="">
+
+            <span>Files:</span>
+            <div id="file-system">
+                <!-- Files appear here -->
+            </div>
+            
+            <button class="btn btn-secondary" onclick="unselectAllFiles()">Unselect All</button>
+            <button class="btn btn-secondary" onclick="selectAllFiles()">Select All</button>
+            <button class="btn btn-info" onclick="fetchFiles()">Fetch Files</button>
+        </div>        
+        <div class="chat-interface">
+            <div id="chat-response">
+                <!-- Chat responses appear here -->
+            </div>
+            <textarea id="user-input" class="form-control" placeholder="Type your message here..."></textarea>
+            <button id="send-button" class="btn btn-primary" onclick="sendChat()" disabled>Send (ctrl+enter)</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="/static/js/script.js"></script>
+    <script>
+        feather.replace(); // Initialize Feather icons
+    </script>
+</body>
+</html>
