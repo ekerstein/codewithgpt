@@ -106,9 +106,7 @@ function sendChat() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    fetchCurrentFolderPath().then(() => {
-        fetchFiles(); // Automatically fetch files after fetching the current folder path
-    });
+    fetchFiles(); // Automatically fetch files after fetching the current folder path
     
     const input = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
@@ -121,20 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
     feather.replace(); // Initialize Feather icons
 });
 
-function fetchCurrentFolderPath() {
-    return fetch('/api/current-folder') // Add `return` here
-        .then(response => response.json())
-        .then(data => {
-            const folderPathInput = document.getElementById('folder-path');
-            folderPathInput.value = data.current_folder;
-            // Optionally, you can call fetchFiles() here if you prefer to chain it as a promise after setting folder path
-        })
-        .catch(error => console.error('Error fetching current folder:', error));
-}
-
 function fetchFiles() {
     // Assuming 'base_path' is known or selected by the user
-    const basePath = document.getElementById('folder-path').value; // or any other logic to get/set this
+    const basePath = document.getElementById('folder-selector').value; // or any other logic to get/set this
     fetch(`/api/files?path=${encodeURIComponent(basePath)}`)
         .then(response => response.json())
         .then(data => {
@@ -196,6 +183,31 @@ document.getElementById('model-selector').addEventListener('change', function() 
     })
     .catch(error => {
         console.error('Error updating model choice:', error);
+    });
+});
+
+document.getElementById('folder-selector').addEventListener('input', function() {
+    let folderPath = this.value.trim();
+
+    // Update the session with the new folder path
+    fetch('/set-folder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({folder_path: folderPath}),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to update folder path');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Folder path updated:', data.folder_path);
+    })
+    .catch(error => {
+        console.error('Error updating folder path:', error);
     });
 });
 

@@ -23,20 +23,26 @@ def index():
     except Exception as e:
         print(f"Error fetching models: {e}")
         sorted_models = []
-    # Get the current model choice from session if exists, else set to None
-    current_model_choice = session.get('model_choice', None)
-    return render_template('index.html', models=sorted_models, current_model_choice=current_model_choice)
-
-@app.route('/api/current-folder')
-def get_current_folder():
-    current_folder = os.getcwd()  # Or any logic to determine your repo's path
-    return jsonify(current_folder=current_folder)
+    current_model_choice = session.get('model_choice')
+    current_folder_path = session.get('folder_path', os.getcwd())  # Default to current working directory if not set
+    return render_template(
+        'index.html', 
+        models=sorted_models, 
+        current_model_choice=current_model_choice, 
+        current_folder_path=current_folder_path
+    )
 
 @app.route('/set-model', methods=['POST'])
 def set_model():
     model = request.json.get('model')  # Assuming the model choice is sent as JSON data
     session['model_choice'] = model  # Store model choice in session
     return jsonify({'message': 'Model choice saved', 'model': model})
+
+@app.route('/set-folder', methods=['POST'])
+def set_folder():
+    folder_path = request.json.get('folder_path')  # Assuming folder path is sent as JSON data
+    session['folder_path'] = folder_path  # Store folder path in session
+    return jsonify({'message': 'Folder path saved', 'folder_path': folder_path})
 
 def parse_gptignore(base_path):
     ignore_patterns = []
