@@ -108,34 +108,89 @@ function sendChat() {
     });
 }
 
+function openGptIgnoreModal(edit = false) {
+    fetch('/api/gptignore')
+        .then(response => response.json())
+        .then(data => {
+            if (edit || !data.exists) {
+                document.getElementById('gptignoreContents').value = data.exists ? data.contents : ".git/\n__pycache__/\nvenv/\n.env\n.gptignore";
+                var gptignoreModal = new bootstrap.Modal(document.getElementById('gptignoreModal'), {
+                    // options
+                });
+                gptignoreModal.show();
+            }
+        })
+        .catch(error => console.log('Error fetching .gptignore:', error));
+}
+
+function saveGptIgnore() {
+    const contents = document.getElementById('gptignoreContents').value;
+    fetch('/api/gptignore', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            contents: contents,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message);
+        var gptignoreModal = bootstrap.Modal.getInstance(document.getElementById('gptignoreModal'));
+        gptignoreModal.hide();
+        fetchFiles();
+    })
+    .catch(error => console.log('Error saving .gptignore:', error));
+}
+
 function fetchFiles() {
-    // Assuming 'base_path' is known or selected by the user
-    const basePath = document.getElementById('folder-selector').value; // or any other logic to get/set this
+    const basePath = document.getElementById('folder-selector').value;
     fetch(`/api/files?path=${encodeURIComponent(basePath)}`)
         .then(response => response.json())
         .then(data => {
+            console.log(data)
             const fileSystemContainer = document.getElementById('file-system');
-            fileSystemContainer.innerHTML = ''; // Clear previous contents
+            fileSystemContainer.innerHTML = '';
 
-            data.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = "file-item"; 
-                const checkBox = `<input type="checkbox" class="file-checkbox" name="files" value="${item.path}"> `;
-                const fileName = `<span class="file-name">${item.path}</span>`; // Wrap file name in a span for style or event handling
-                itemElement.innerHTML = checkBox + fileName; // Combine checkbox and filename
-                fileSystemContainer.appendChild(itemElement);
-            });
+            document.getElementById('edit-gptignore').disabled = true;
 
-            document.querySelectorAll('.file-item').forEach(item => {
-                item.addEventListener('click', function(event) {
-                    // Prevent toggling if the click is directly on the checkbox
-                    if (event.target.type !== 'checkbox') {
-                        const checkBox = this.querySelector('.file-checkbox');
-                        checkBox.checked = !checkBox.checked;
-                    }
-                    updateCopyButtonState();
+            if (data.files.length === 0) {
+                // No files in directory
+                const messageElement = document.createElement('div');
+                messageElement.textContent = 'No files in folder';
+                fileSystemContainer.appendChild(messageElement);
+            } else if (!data.gptignoreExists) {
+                // .gptignore doesn't exist
+                const buttonElement = document.createElement('button');
+                buttonElement.textContent = 'Create .gptignore file to view folder';
+                buttonElement.className = 'btn btn-success w-100';
+                buttonElement.onclick = function() { openGptIgnoreModal(); };
+                fileSystemContainer.appendChild(buttonElement);
+            } else {
+                // Files exist and .gptignore exists
+                document.getElementById('edit-gptignore').disabled = false;
+
+                data.files.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = "file-item"; 
+                    const checkBox = `<input type="checkbox" class="file-checkbox" name="files" value="${item.path}"> `;
+                    const fileName = `<span class="file-name">${item.path}</span>`; // Wrap file name in a span for style or event handling
+                    itemElement.innerHTML = checkBox + fileName; // Combine checkbox and filename
+                    fileSystemContainer.appendChild(itemElement);
                 });
-            });
+
+                document.querySelectorAll('.file-item').forEach(item => {
+                    item.addEventListener('click', function(event) {
+                        // Prevent toggling if the click is directly on the checkbox
+                        if (event.target.type !== 'checkbox') {
+                            const checkBox = this.querySelector('.file-checkbox');
+                            checkBox.checked = !checkBox.checked;
+                        }
+                        updateCopyButtonState();
+                    });
+                });
+            }
         })
         .catch(error => console.error('Failed to fetch files:', error));
 }
@@ -242,9 +297,8 @@ document.getElementById('model-selector').addEventListener('change', function() 
     });
 });
 
-document.getElementById('folder-selector').addEventListener('input', function() {
-    let folderPath = this.value.trim();
-
+document.getElementById('folder-selector-btn').addEventListener('click', function() {
+    let folderPath = document.getElementById('folder-selector').value.trim();
     // Update the session with the new folder path
     fetch('/set-folder', {
         method: 'POST',

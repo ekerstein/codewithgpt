@@ -77,10 +77,6 @@ def chat():
     else:
         final_prompt = prompt_user
 
-    print("------------PROMPT START------------")
-    print(final_prompt)
-    print("------------PROMPT   END------------")
-
     # Generate response using the OpenAI API
     try:
         response = openai.chat.completions.create(
@@ -119,6 +115,23 @@ def file_contents():
     contents = files_to_text(file_paths)
     return jsonify({"contents": contents})
 
+@app.route('/api/gptignore', methods=['GET', 'POST'])
+def gptignore():
+    base_path = session.get('folder_path', os.getcwd())
+    gptignore_path = os.path.join(base_path, '.gptignore')
+    if request.method == 'POST':
+        contents = request.json.get('contents', '')
+        with open(gptignore_path, 'w') as f:
+            f.write(contents)
+        return jsonify({"message": "File updated"})
+    else:
+        if os.path.exists(gptignore_path):
+            with open(gptignore_path, 'r') as f:
+                contents = f.read()
+            return jsonify({"exists": True, "contents": contents})
+        else:
+            return jsonify({"exists": False, "contents": ""})
+
 #################################################################
 # Utils
 
@@ -140,7 +153,7 @@ def parse_gptignore(base_path):
 def is_ignored(path, ignore_patterns, base_path):
     normalized_path = os.path.normpath(path)
     for pattern in ignore_patterns:
-        pattern = pattern.replace("/", "")
+        pattern = pattern.lstrip("/").rstrip("/")
         pattern_glob = f"**{pattern}**"
         if fnmatch.fnmatch(normalized_path, pattern_glob):
             return True
@@ -149,6 +162,7 @@ def is_ignored(path, ignore_patterns, base_path):
 def list_directory(base_path):
     ignore_patterns = parse_gptignore(base_path)
     directory_contents = []
+    gptignore_exists = os.path.exists(os.path.join(base_path, '.gptignore'))
     for root, dirs, files in os.walk(base_path, topdown=True):
         # Filter directories in place to prevent walking into ignored directories
         dirs[:] = [d for d in dirs if not is_ignored(os.path.join(root, d), ignore_patterns, base_path)]
@@ -158,8 +172,7 @@ def list_directory(base_path):
         for name in filtered_files:
             relative_path = os.path.relpath(os.path.join(root, name), base_path)
             directory_contents.append({'type': 'file', 'name': name, 'path': relative_path, 'ignored': False})
-    
-    return directory_contents
+    return {"files": directory_contents, "gptignoreExists": gptignore_exists}
 
 def is_text_file(file_path):
     _, ext = os.path.splitext(file_path)
