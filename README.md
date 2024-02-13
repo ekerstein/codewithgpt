@@ -1,6 +1,6 @@
 # Code with GPT
 
-Chat interface that allows you to send your code repository to OpenAI when asking questions.
+Chat interface that allows you to send files from your code repository to OpenAI when asking questions.
 
 ![screenshot](https://github.com/ekerstein/codewithgpt/assets/6055508/9a54a867-470c-48e7-8464-541c33b68457)
 
