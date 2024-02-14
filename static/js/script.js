@@ -16,8 +16,6 @@ function sendChat() {
         selectedFiles.push(checkbox.value);
     });
 
-    let chatResponseContainer = document.getElementById('chat-response');
-
     // Display the user's message with a user icon
     let userMessage = document.createElement('div');
     userMessage.style.color = "blue";
@@ -32,7 +30,7 @@ function sendChat() {
     preElement.appendChild(codeElement);
     userMessage.appendChild(preElement);
 
-    chatResponseContainer.appendChild(userMessage);
+    updateChatResponseContainer(userMessage);
     feather.replace(); // Update icons to render the "user" icon
 
     let selectedModel = document.getElementById('model-selector').value; // Get the selected model
@@ -40,7 +38,7 @@ function sendChat() {
     // Insert spinner right after message is sent
     let spinner = document.createElement('div');
     spinner.className = "spinner-icon"; // Use this class for your spinner
-    chatResponseContainer.appendChild(spinner);
+    updateChatResponseContainer(spinner);
 
     fetch('/api/chat', {
         method: 'POST',
@@ -61,7 +59,6 @@ function sendChat() {
     })
     .then(data => {
         spinner.style.display = 'none';
-        console.log(data.response);
         if (data.error) {
             throw data;
         }
@@ -79,7 +76,7 @@ function sendChat() {
         preElement.appendChild(codeElement);
         responseMessage.appendChild(preElement);
     
-        chatResponseContainer.appendChild(responseMessage);
+        updateChatResponseContainer(responseMessage);
         feather.replace();
     })
     .catch(error => {
@@ -92,7 +89,7 @@ function sendChat() {
                     <i data-feather="alert-circle"></i>
                     Error: ${err.message || "An unexpected error occurred."}
                 </div>`;
-            chatResponseContainer.appendChild(errorMessage);
+            updateChatResponseContainer(errorMessage);
             feather.replace(); // Update icons to render the "alert-circle" icon
         }).catch(jsonError => {
             console.error('Error:', jsonError);
@@ -102,10 +99,18 @@ function sendChat() {
                     <i data-feather="alert-circle"></i>
                     Error: An unexpected error occurred and could not parse error details.
                 </div>`;
-            chatResponseContainer.appendChild(errorMessage);
+            updateChatResponseContainer(errorMessage);
             feather.replace(); // Ensure icons are updated even in this catch block
         });
     });
+}
+
+function updateChatResponseContainer(element) {
+    let chatResponseContainer = document.getElementById('chat-response');
+    chatResponseContainer.appendChild(element);
+    setTimeout(() => {
+        chatResponseContainer.scrollTop = chatResponseContainer.scrollHeight;
+    }, 0);
 }
 
 function openGptIgnoreModal(edit = false) {
