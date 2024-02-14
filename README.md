@@ -53,9 +53,8 @@ This command will start the development server, and you should be able to access
 
 Contributions are welcome! Here are a few things that need attention:
 
-- **Tests**: Adding or improving unit and integration tests to ensure reliability and predictability of the app.
-- **API Response Formatting**: Make the API response more user-friendly and standardized to improve client-side handling. Code formatting is not happening at the moment in the response.
-- **Request Customization**: Implement more customization options for the requests sent to OpenAI, such as choosing different types of request parameters.
-- **Code Cleanup and Optimization**: Look for opportunities to refactor and optimize the existing codebase for better performance and readability.
+- **Tests**: Adding unit and integration tests
+- **API Response Formatting**: Make the API response more user-friendly. Code formatting is not happening at the moment.
+- **Request Customization**: Add more customization options for the requests sent to OpenAI, such as choosing request parameters.
 
 To contribute, please fork the repository, make your changes, and submit a pull request with a clear description of what you've done.
