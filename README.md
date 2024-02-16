@@ -6,43 +6,22 @@ Chat interface that allows you to send files from your code repository to OpenAI
 
 ## Getting Started
 
-### Prerequisites
-
-To run this Flask application, be sure to install the requirements
-
+1. Install the requirements
 ```
 pip install -r requirements.txt
 ```
-
-### Setting Up Your `.env` File
-
-Before starting the application, you need to configure your environment variables. Create a `.env` file in the root directory of your project with the following content:
-
+2. Create a `.env` file in the root directory of your project with the following content:
 ```
 OPENAI_API_KEY=your_openai_api_key_here
 ```
+3. The application supports a `.gptignore` file that helps in excluding files or directories from being processed by the GPT model. This is similar in concept to `.gitignore`. Review the `.gptignore` file to make sure it's excluding files you don't want to be shown on the file viewer.
 
-Replace `your_openai_api_key_here` with your actual OpenAI API key.
-
-### Configuring `.gptignore`
-
-The application supports a `.gptignore` file that helps in excluding files or directories from being processed by the GPT model. This is similar in concept to `.gitignore`.
-
-Review the `.gptignore` file to make sure it's excluding files you don't want to be shown on the file viewer.
-
-### Starting the Flask App
-
-To start the Flask application, navigate to your project directory in the terminal and run:
-
+4. Start the Flask application
 ```
 python application.py
 ```
 
-This command will start the development server, and you should be able to access the application by navigating to `http://localhost:5000/` in your web browser.
-
 ## How The App Works
-
-### General Workflow
 
 1. **Initialization**: Upon launching, the app loads the environment variables, initializes the OpenAI SDK with your API key, and starts the Flask server.
 2. **Index Page**: The main page (`/`) lists the available GPT models fetched from OpenAI, and allows the user to select a model to work with. The model selection is stored in a user session.
@@ -53,8 +32,8 @@ This command will start the development server, and you should be able to access
 
 Contributions are welcome! Here are a few things that need attention:
 
-- **Tests**: Adding unit and integration tests
-- **API Response Formatting**: Make the API response more user-friendly. Code formatting is not happening at the moment.
-- **Request Customization**: Add more customization options for the requests sent to OpenAI, such as choosing request parameters.
+* **Tests**: Adding unit and integration tests
+* **Request Customization**: Add more customization options for the requests sent to OpenAI, such as choosing request parameters.
+* **Response Formatting**: Make the API response more user-friendly. Code formatting is not happening in the response window.
 
 To contribute, please fork the repository, make your changes, and submit a pull request with a clear description of what you've done.
