@@ -25,7 +25,8 @@ def index():
     except Exception as e:
         print(f"Error fetching models: {e}")
         sorted_models = []
-    current_model_choice = session.get('model_choice')
+    DEFAULT_MODEL_CHOICE = 'gpt-4o'
+    current_model_choice = session.get('model_choice', DEFAULT_MODEL_CHOICE)
     current_folder_path = get_current_folder_path()
     return render_template(
         'index.html', 
